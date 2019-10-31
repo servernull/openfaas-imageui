@@ -1,0 +1,9 @@
+version: 1.0
+provider:
+  name: openfaas
+functions:
+  openfaas-imageui:
+    lang: golang-http
+    handler: ./openfaas-imageui
+    image: servernull/openfaas-imageui:0.1.0
+
