@@ -6,4 +6,7 @@ functions:
     lang: golang-http
     handler: ./openfaas-imageui
     image: servernull/openfaas-imageui:0.1.0
-
+    environment:
+      read_timeout: 120
+      write_timeout: 120
+      exec_timeout: 120
