@@ -9,12 +9,12 @@
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                       mdl-textfield--floating-label mdl-textfield--align-right">
             <label class="mdl-button mdl-js-button mdl-button--icon"
-                  for="waterfall-exp">
+                  for="site">
               <i class="material-icons">search</i>
             </label>
             <div class="mdl-textfield__expandable-holder">
-              <input class="mdl-textfield__input" type="text" name="sample"
-                    id="waterfall-exp">
+              <input @keyup.enter="siteUrlKeydown"  v-model="url" class="mdl-textfield__input" type="text" name="sample"
+                    id="site">
             </div>
           </div>
         </div>
@@ -54,13 +54,35 @@ export default {
     Links,
     Analytics
   },
-  mounted: function() {
-    axios.post('/action/crawl?action=crawl', 'http://scottleedavis.com').then(response => {
-      EventBus.$emit("crawl", response.data);
-    })
-    axios.post('/action/search?action=search', 'http://scottleedavis.com').then(response => {
-      EventBus.$emit("search", response.data);
-    })
+  data() {
+    return {
+      url: '',
+      interval: 0,
+    }
+  },
+  methods: {
+    siteUrlKeydown: function() { 
+      EventBus.$emit("crawl/start", {})
+      axios.post('/action/crawl?action=crawl',  this.url).then(response => {
+        EventBus.$emit("crawl/complete", response.data)
+      })
+      this.stopRefresh()
+      EventBus.$emit("search/start", {})
+      axios.post('/action/search?action=search', this.url).then(response => {
+        EventBus.$emit("search/complete", response.data)
+        // this.refreshSearch()
+      })
+    },
+    refreshSearch: function() {
+      this.interval = setInterval(function() {
+        axios.post('/action/search?action=search', this.url).then(response => {
+          EventBus.$emit("search/refresh", response.data)
+        })
+      }, 5000)
+    },
+    stopRefresh: function() {
+      clearInterval(this.interval)
+    }
   }
 }
 </script>
@@ -69,6 +91,9 @@ export default {
 #app {
 }
 .page-content {
+  height: 100%;
+}
+.mdl-layout__tab-panel {
   height: 100%;
 }
 </style>

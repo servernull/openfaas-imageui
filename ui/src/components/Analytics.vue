@@ -5,9 +5,20 @@
 </template>
 
 <script>
+import { EventBus } from "../event-bus.js";
+
 export default {
   name: 'Analytics',
-  props: {}
+  props: {},
+  created: function() {
+    EventBus.$on("search/complete", this.update)
+    EventBus.$on("search/refresh", this.update)
+  },
+  methods: {
+    update : function(data) {
+      console.log(data);
+    }
+  }
 }
 </script>
 
