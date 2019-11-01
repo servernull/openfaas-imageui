@@ -9,7 +9,6 @@ import (
 	handler "github.com/openfaas-incubator/go-function-sdk"
 )
 
-// Handle a function invocation
 func Handle(req handler.Request) (handler.Response, error) {
 	var err error
 
@@ -84,65 +83,37 @@ func getHtml() string {
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Gezellig</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 		<style>
 		` + getStyle() + ` 
 		</style>
 	  </head>
 	  <body>
-		<div class="site-wrapper">
-	
-		  <div class="site-wrapper-inner">
-	
-			<div class="cover-container">
-	
-			  <div class="masthead clearfix">
-				<div class="inner">
-				  <h3 class="masthead-brand">Gezellig</h3>
-				  <nav>
-					<ul class="nav masthead-nav">
-					  <li class="active"><label for="site"><input id="site"></li>
-					  <li><button id="crawl">crawl</button></li>
-					  <li><button id="search">search</button></li>
-					</ul>
-				  </nav>
-				</div>
-			  </div>
-	
-			  <div id="content" class="inner cover">
-				<h1 class="cover-heading">An experiment: Crawl and Analyze images.</h1>
-				<p class="lead">Gezellig is a pure FaaS solution that crawls a site for images and indexes information about them for searching.</p>
-				<p class="lead">
-				  <a target="_blank" href="https://github.com/servernull/gezellig" class="btn btn-lg btn-default">Learn more</a>
-				</p>
-			  </div>
-	
-			  <div class="mastfoot">
-				<div class="inner">
-				  <p>A <a target="_blank" href="https://github.com/servernull">Server Null</a> project.</p>
-				</div>
-			  </div>
-			</div>
-		  </div>
-		</div>
-	
-	
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-	
+		<noscript><strong>We're sorry but ui doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript>
+		<div id=app></div>
 		<script>
-		` + getScript() + `
+		` + getVendorScript() + `
+		</script>	
+		<script>
+		` + getAppScript() + `
 		</script>
 	  </body>
 	</html>`
 }
 
-func getScript() string {
-	b, _ := ioutil.ReadFile("script.js")
+func getVendorScript() string {
+	b, _ := ioutil.ReadFile("chunk-vendors.js")
+	return string(b)
+}
+
+func getAppScript() string {
+	b, _ := ioutil.ReadFile("app.js")
 	return string(b)
 }
 
 func getStyle() string {
-	b, _ := ioutil.ReadFile("style.css")
+	b, _ := ioutil.ReadFile("app.css")
 	return string(b)
 }

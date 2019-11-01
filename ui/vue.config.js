@@ -1,0 +1,15 @@
+
+module.exports = {
+    filenameHashing: false,
+    devServer: {
+      disableHostCheck: true,
+      proxy: {
+        '/action/crawl': {
+          target: "http://192.168.99.104:31112/function/openfaas-imagecrawler",
+        },
+        '/action/search': {
+          target: "http://192.168.99.104:31112/function/openfaas-imagesearch",
+        }
+      },
+    }
+}
