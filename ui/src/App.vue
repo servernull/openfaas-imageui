@@ -58,17 +58,29 @@ export default {
     return {
       url: '',
       interval: 0,
+      crawlUrl: '?action=crawl',
+      searchUrl: '?action=search',
+    }
+  },
+  created: function() {
+    console.log(process.env.NODE_ENV)
+    if (process.env.NODE_ENV === 'development') {
+      this.crawlUrl = '/action/crawl'
+      this.searchUrl = '/action/search'
     }
   },
   methods: {
     siteUrlKeydown: function() { 
+      if (!this.url.startsWith("http")) {
+        this.url = "http://" + this.url
+      }
       EventBus.$emit("crawl/start", {})
-      axios.post('/action/crawl?action=crawl',  this.url).then(response => {
+      axios.post(this.crawlUrl,  this.url).then(response => {
         EventBus.$emit("crawl/complete", response.data)
       })
       this.stopRefresh()
       EventBus.$emit("search/start", {})
-      axios.post('/action/search?action=search', this.url).then(response => {
+      axios.post(this.searchUrl, this.url).then(response => {
         EventBus.$emit("search/complete", response.data)
         // this.refreshSearch()
       })

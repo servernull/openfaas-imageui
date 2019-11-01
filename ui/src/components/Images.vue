@@ -4,7 +4,7 @@
     <div v-if="samples.length == 0 && !searching" class="empty">
       No images.  Please search above
     </div>
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp" v-bind:key="sample" v-for="sample in samples">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp" v-bind:key="sample.id" v-for="sample in samples">
       <div class="mdl-card__title" v-bind:style="{ background: 'url(' + sample.url + ') center / cover' }">
         <h2 class="mdl-card__title-text">{{ sample.filename }}</h2>
       </div>
