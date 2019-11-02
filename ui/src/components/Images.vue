@@ -64,7 +64,20 @@ export default {
       this.searching = true;
       this.samples = [];
     },
-    searchRefresh: function() {
+    searchRefresh: function(data) {
+      data = data.map(d => {
+        if (d.exif.length > 0) {
+          d.exif = d.exif.map(e => {
+              var key = Object.keys(e)[0]
+              var value = Object.values(e)[0]
+              return key+"="+value;
+          })
+          d.exif = d.exif.filter(f => f !== "Error=no EXIF found in image");
+        }
+        d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
+        return d;
+      });
+      this.samples = data;
       this.searching = false;
     }
   },

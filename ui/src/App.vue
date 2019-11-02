@@ -80,6 +80,7 @@ export default {
       if (!this.url.startsWith("http")) {
         this.url = "http://" + this.url
       }
+      this.clearSearch()
       EventBus.$emit("crawl/start", {})
       axios.post(this.crawlUrl,  this.url).then(response => {
         EventBus.$emit("crawl/complete", response.data)
@@ -88,18 +89,23 @@ export default {
       EventBus.$emit("search/start", {})
       axios.post(this.searchUrl, this.url).then(response => {
         EventBus.$emit("search/complete", response.data)
-        // this.refreshSearch()
+        this.refreshSearch()
       })
     },
     refreshSearch: function() {
+      if (this.interval !== 0)
+        return
+      var sUrl = this.searchUrl
+      var sPattern = this.url
       this.interval = setInterval(function() {
-        axios.post('/action/search?action=search', this.url).then(response => {
+        axios.post(sUrl, sPattern).then(response => {
           EventBus.$emit("search/refresh", response.data)
         })
       }, 5000)
     },
     stopRefresh: function() {
       clearInterval(this.interval)
+      this.interval = 0
     },
     clearSearch: function() {
       EventBus.$emit("crawl/complete",[])
