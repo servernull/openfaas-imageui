@@ -17,6 +17,10 @@
                     id="site">
             </div>
           </div>
+          <div class="mdl-layout-spacer"></div>
+          <button @click="clearSearch" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+            Clear
+          </button>
         </div>
         <!-- Tabs -->
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
@@ -60,6 +64,7 @@ export default {
       interval: 0,
       crawlUrl: '?action=crawl',
       searchUrl: '?action=search',
+      clearUrl: '?action=clear',
     }
   },
   created: function() {
@@ -67,6 +72,7 @@ export default {
     if (process.env.NODE_ENV === 'development') {
       this.crawlUrl = '/action/crawl'
       this.searchUrl = '/action/search'
+      this.clearUrl = '/action/clear'
     }
   },
   methods: {
@@ -94,6 +100,11 @@ export default {
     },
     stopRefresh: function() {
       clearInterval(this.interval)
+    },
+    clearSearch: function() {
+      EventBus.$emit("crawl/complete",[])
+      EventBus.$emit("search/complete", [])
+      axios.post(this.clearUrl, "clear")
     }
   }
 }

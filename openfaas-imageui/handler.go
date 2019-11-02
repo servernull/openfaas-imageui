@@ -9,10 +9,11 @@ import (
 	handler "github.com/openfaas-incubator/go-function-sdk"
 )
 
+//Handle incoming requests
 func Handle(req handler.Request) (handler.Response, error) {
 	var err error
 
-	if len(req.QueryString) == 0 {
+	if len(req.QueryString) == 0 && req.Method == "GET" {
 		return handler.Response{
 			Body:       []byte(getHtml()),
 			StatusCode: http.StatusOK,
@@ -51,6 +52,22 @@ func Handle(req handler.Request) (handler.Response, error) {
 	case "search":
 		url := req.Body
 		resp, err := http.Post("http://gateway.openfaas:8080/function/openfaas-imagesearch", "application/json", bytes.NewBuffer(url))
+		if err != nil {
+			return handler.Response{
+				Body:       []byte("{\"status\": \"error\"}"),
+				StatusCode: http.StatusBadRequest,
+				Header:     headers,
+			}, err
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		return handler.Response{
+			Body:       []byte(body),
+			StatusCode: http.StatusOK,
+			Header:     headers,
+		}, err
+	case "clear":
+		resp, err := http.Post("http://gateway.openfaas:8080/function/openfaas-elastic", "application/json", bytes.NewBuffer([]byte("clear")))
 		if err != nil {
 			return handler.Response{
 				Body:       []byte("{\"status\": \"error\"}"),
