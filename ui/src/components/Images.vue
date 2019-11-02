@@ -4,22 +4,24 @@
     <div v-if="samples.length == 0 && !searching" class="empty">
       No images.  Please search above
     </div>
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp" v-bind:key="sample.id" v-for="sample in samples">
-      <div class="mdl-card__title" v-bind:style="{ background: 'url(' + sample.url + ') center / cover' }">
-        <h2 class="mdl-card__title-text">{{ sample.filename }}</h2>
-      </div>
-      <div class="mdl-card__supporting-text">
-        <div class="info">
-          <label for="nsfw">NSFW score</label>
-          <p id="nsfw">{{ sample.nsfw.nsfw_score.toPrecision(3) }}</p>
-          <label for="exif">EXIF</label>
-          <textarea id="exif" v-model="sample.exif"></textarea>
+    <div class="cards">
+      <div class="demo-card-wide mdl-card mdl-shadow--2dp" v-bind:key="sample.id" v-for="sample in samples">
+        <div class="mdl-card__title" v-bind:style="{ background: 'url(' + sample.url + ') center / cover' }">
+          <h2 class="mdl-card__title-text">{{ sample.filename }}</h2>
         </div>
-      </div>
-      <div class="mdl-card__actions mdl-card--border">
-        <a target="_blank" :href="sample.url" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-          View Image
-        </a>
+        <div class="mdl-card__supporting-text">
+          <div class="info">
+            <label for="nsfw">NSFW score</label>
+            <p id="nsfw">{{ sample.nsfw ? sample.nsfw.nsfw_score.toPrecision(3) : "error" }}</p>
+            <label for="exif">EXIF</label>
+            <textarea id="exif" v-model="sample.exif"></textarea>
+          </div>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a target="_blank" :href="sample.url" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+            View Image
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +52,7 @@ export default {
               var value = Object.values(e)[0]
               return key+"="+value;
           })
+          d.exif = d.exif.filter(f => f !== "Error=no EXIF found in image");
         }
         d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
         return d;
@@ -83,6 +86,11 @@ export default {
 }
 .hidden {
   display: none;
+}
+.cards {
+  display: flex;
+  flex-direction: row;
+  flex-flow: row wrap;
 }
 .demo-card-wide.mdl-card {
   width: 300px;

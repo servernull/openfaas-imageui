@@ -94,7 +94,7 @@ export default {
           }]
       },
       nsfwChartOptions: {
-          labels: ['SFW > 0.5', 'NSFW > 0.5'],
+          labels: ['SFW > 0.5', 'NSFW >= 0.5'],
           responsive: [{
             breakpoint: 480,
             options: {
@@ -114,14 +114,14 @@ export default {
       return  [this.imageCount, this.exifCount];
     },
     nsfwSeries: function() {
-      return [this.items.filter(i => i.nsfw.nsfw_score < 0.5).length, this.items.filter(i => i.nsfw.nsfw_score >= 0.5).length]
+      return [this.items.filter(i => i.nsfw).filter(i => i.nsfw.nsfw_score < 0.5).length, this.items.filter(i => i.nsfw).filter(i => i.nsfw.nsfw_score >= 0.5).length]
     },
   },
   methods: {
     update : function(data) {
       this.items = data
       this.imageCount = data.length
-      var nsfw_nums = data.map(d => d.nsfw.nsfw_score)
+      var nsfw_nums = data.filter(d => d.nsfw).map(d => d.nsfw.nsfw_score)
       this.averageNsfw = nsfw_nums.reduce((a,b) => a + b, 0)/ data.length
       this.minNsfw = Math.min(...nsfw_nums)
       this.maxNsfw = Math.max(...nsfw_nums)
