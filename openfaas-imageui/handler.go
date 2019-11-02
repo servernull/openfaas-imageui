@@ -34,7 +34,7 @@ func Handle(req handler.Request) (handler.Response, error) {
 	switch action {
 	case "crawl":
 		url := req.Body
-		resp, err := http.Post("http://gateway.openfaas:8080/function/openfaas-imagecrawler", "application/json", bytes.NewBuffer(url))
+		resp, err := http.Post("http://gateway.openfaas:8080/function/openfaas-imagecrawlerdemux", "application/json", bytes.NewBuffer(url))
 		if err != nil {
 			return handler.Response{
 				Body:       []byte("{\"status\": \"error\"}"),

@@ -5,7 +5,7 @@ module.exports = {
       disableHostCheck: true,
       proxy: {
         '/action/crawl': {
-          target: "http://192.168.99.104:31112/function/openfaas-imagecrawler",
+          target: "http://192.168.99.104:31112/function/openfaas-imagecrawlerdemux",
         },
         '/action/search': {
           target: "http://192.168.99.104:31112/function/openfaas-imagesearch",
