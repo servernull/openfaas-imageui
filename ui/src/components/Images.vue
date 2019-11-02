@@ -76,6 +76,7 @@ export default {
   text-align: center;
   padding-top: 100px;
   font-size: x-large;
+  margin: 0 auto;
 }
 #p2 {
   width: 100%;
