@@ -111,9 +111,7 @@ export default {
       var interval = this.interval = setInterval(function() {
         axios.post(this.searchUrl, this.url).then(response => {
           response.data.length > 0 && response.data.length === this.samples.length ? this.sameCount++ : 0
-          console.log(this.sameCount)
           if( this.sameCount >= this.maxSameCount) {
-            debugger
             EventBus.$emit("search/refresh/timeout", response.data)
             clearInterval(interval)
           } else {
