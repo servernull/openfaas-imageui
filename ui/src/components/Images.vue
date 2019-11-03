@@ -11,6 +11,7 @@
         </div>
         <div class="mdl-card__supporting-text">
           <div class="info">
+            <p id="inception">{{ sample.inception }}</p>
             <label for="nsfw">NSFW score</label>
             <p id="nsfw">{{ sample.nsfw && sample.nsfw.nsfw_score ? sample.nsfw.nsfw_score.toPrecision(3) : "error" }}</p>
             <label for="exif">EXIF</label>
@@ -58,6 +59,13 @@ export default {
           d.exif = d.exif.filter(f => f !== "Error=no EXIF found in image");
         }
         d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
+        if (d.inception && d.inception.length >= 1) {
+          d.inception = d.inception.map(f => f.name)
+          d.inception = d.inception.slice(0,2)
+          d.inception = d.inception.join(", ")
+        } else {
+          d.inception = "error"
+        }
         return d;
       });
     },
