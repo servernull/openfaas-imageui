@@ -5,13 +5,13 @@ module.exports = {
       disableHostCheck: true,
       proxy: {
         '/action/crawl': {
-          target: "http://192.168.99.104:31112/function/openfaas-imagecrawlerdemux",
+          target: "http://127.0.0.1:8080/function/openfaas-imagecrawlerdemux",
         },
         '/action/search': {
-          target: "http://192.168.99.104:31112/function/openfaas-imagesearch",
+          target: "http://127.0.0.1:8080/function/openfaas-imagesearch",
         },
         '/action/clear': {
-          target: "http://192.168.99.104:31112/function/openfaas-elastic"
+          target: "http://127.0.0.1:8080/function/openfaas-elastic"
         }
       },
     }

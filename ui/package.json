@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --port 7777",
     "build": "vue-cli-service build; npm run package;",
     "lint": "vue-cli-service lint",
     "package": "cp dist/js/chunk-vendors.js ../openfaas-imageui/; cp dist/js/app.js ../openfaas-imageui/; cp dist/css/app.css ../openfaas-imageui/"

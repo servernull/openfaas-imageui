@@ -121,6 +121,7 @@ export default {
     update : function(data) {
       this.items = data
       this.imageCount = data.length
+      this.exifCount = data.filter(d => d.exif.length).length
       var nsfw_nums = data.filter(d => d.nsfw).map(d => d.nsfw.nsfw_score)
       this.averageNsfw = nsfw_nums.reduce((a,b) => a + b, 0)/ data.length
       this.minNsfw = Math.min(...nsfw_nums)

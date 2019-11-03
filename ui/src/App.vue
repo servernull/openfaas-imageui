@@ -18,26 +18,29 @@
             </div>
           </div>
           <div class="mdl-layout-spacer"></div>
+          <button @click="refresh" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+            Refresh
+          </button>
           <button @click="clearSearch" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
             Clear
           </button>
         </div>
         <!-- Tabs -->
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-          <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Images</a>
-          <a href="#fixed-tab-2" class="mdl-layout__tab">Analytics</a>
-          <a href="#fixed-tab-3" class="mdl-layout__tab">Links</a>
+          <a href="#fixed-tab-1" class="mdl-layout__tab">Links</a>
+          <a href="#fixed-tab-2" class="mdl-layout__tab is-active">Images</a>
+          <a href="#fixed-tab-3" class="mdl-layout__tab">Analytics</a>
         </div>
       </header>
       <main class="mdl-layout__content">
-        <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
+        <section class="mdl-layout__tab-panel" id="fixed-tab-1">
+          <div class="page-content"><Links /></div>
+        </section>
+        <section class="mdl-layout__tab-panel is-active" id="fixed-tab-2">
           <div class="page-content"><Images /></div>
         </section>
-        <section class="mdl-layout__tab-panel" id="fixed-tab-2">
-          <div class="page-content"><Analytics /></div>
-        </section>
         <section class="mdl-layout__tab-panel" id="fixed-tab-3">
-          <div class="page-content"><Links /></div>
+          <div class="page-content"><Analytics /></div>
         </section>
       </main>
     </div>
@@ -65,10 +68,12 @@ export default {
       crawlUrl: '?action=crawl',
       searchUrl: '?action=search',
       clearUrl: '?action=clear',
+      sameCount: 0,
+      maxSameCount: 2,
+      samples: [],
     }
   },
   created: function() {
-    console.log(process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'development') {
       this.crawlUrl = '/action/crawl'
       this.searchUrl = '/action/search'
@@ -80,7 +85,8 @@ export default {
       if (!this.url.startsWith("http")) {
         this.url = "http://" + this.url
       }
-      this.clearSearch()
+      EventBus.$emit("crawl/complete",[])
+      EventBus.$emit("search/complete", [])
       EventBus.$emit("crawl/start", {})
       axios.post(this.crawlUrl,  this.url).then(response => {
         EventBus.$emit("crawl/complete", response.data)
@@ -92,16 +98,30 @@ export default {
         this.refreshSearch()
       })
     },
+    refresh: function() {
+      this.stopRefresh();
+      EventBus.$emit("refresh/start", {})
+      axios.post(this.searchUrl, this.url).then(response => {
+        EventBus.$emit("refresh/complete", response.data)
+      })
+    },
     refreshSearch: function() {
       if (this.interval !== 0)
         return
-      var sUrl = this.searchUrl
-      var sPattern = this.url
-      this.interval = setInterval(function() {
-        axios.post(sUrl, sPattern).then(response => {
-          EventBus.$emit("search/refresh", response.data)
+      var interval = this.interval = setInterval(function() {
+        axios.post(this.searchUrl, this.url).then(response => {
+          response.data.length > 0 && response.data.length === this.samples.length ? this.sameCount++ : 0
+          console.log(this.sameCount)
+          if( this.sameCount >= this.maxSameCount) {
+            debugger
+            EventBus.$emit("search/refresh/timeout", response.data)
+            clearInterval(interval)
+          } else {
+            EventBus.$emit("search/refresh", response.data)
+          }
+          this.samples = response.data
         })
-      }, 5000)
+      }.bind(this), 5000)
     },
     stopRefresh: function() {
       clearInterval(this.interval)

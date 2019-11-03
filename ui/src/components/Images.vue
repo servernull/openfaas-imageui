@@ -12,7 +12,7 @@
         <div class="mdl-card__supporting-text">
           <div class="info">
             <label for="nsfw">NSFW score</label>
-            <p id="nsfw">{{ sample.nsfw ? sample.nsfw.nsfw_score.toPrecision(3) : "error" }}</p>
+            <p id="nsfw">{{ sample.nsfw && sample.nsfw.nsfw_score ? sample.nsfw.nsfw_score.toPrecision(3) : "error" }}</p>
             <label for="exif">EXIF</label>
             <textarea id="exif" v-model="sample.exif"></textarea>
           </div>
@@ -36,18 +36,19 @@ export default {
     EventBus.$on("search/complete", this.searchComplete)
     EventBus.$on("search/start", this.searchStart)
     EventBus.$on("search/refresh", this.searchRefresh)
+    EventBus.$on("search/refresh/timeout", this.searchRefreshTimeout)
+    EventBus.$on("refresh/complete", this.refreshComplete)
+    EventBus.$on("refresh/start", this.refreshStart)
   },
   data: function () {
     return {
       samples: [],
       searching: false,
-      sameCount: 0,
-      maxSameCount: 5,
     };
   },
   methods: {
-    searchComplete : function(data){
-      data = data.map(d => {
+    transform: function(data) {
+      return data.map(d => {
         if (d.exif.length > 0) {
           d.exif = d.exif.map(e => {
               var key = Object.keys(e)[0]
@@ -59,31 +60,30 @@ export default {
         d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
         return d;
       });
+    },
+    refreshComplete : function(data){
+      data = this.transform(data)
       this.samples = data;
-      // this.searching = false;
+      this.searching = false;
+    },
+    refreshStart : function() {
+      this.searching = true;
+      this.samples = [];
+    },
+    searchComplete : function(data){
+      data = this.transform(data)
+      this.samples = data;
     },
     searchStart : function() {
       this.searching = true;
       this.samples = [];
     },
     searchRefresh: function(data) {
-      this.sameCount = data.length === this.samples ? this.sameCount++ : 0
-      if (this.sameCount < this.maxSameCount) {
-        data = data.map(d => {
-          if (d.exif.length > 0) {
-            d.exif = d.exif.map(e => {
-                var key = Object.keys(e)[0]
-                var value = Object.values(e)[0]
-                return key+"="+value;
-            })
-            d.exif = d.exif.filter(f => f !== "Error=no EXIF found in image");
-          }
-          d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
-          return d;
-        });
+        data = this.transform(data)
         this.samples = data;
-        this.searching = false;
-      }
+    },
+    searchRefreshTimeout: function() {
+      this.searching = false;
     }
   },
 }
@@ -92,6 +92,7 @@ export default {
 <style scoped>
 .images {
   display: flex;
+  flex-direction: column;
 }
 .empty {
   text-align: center;
