@@ -27,16 +27,16 @@
         </div>
         <!-- Tabs -->
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-          <a href="#fixed-tab-1" class="mdl-layout__tab">Links</a>
-          <a href="#fixed-tab-2" class="mdl-layout__tab is-active">Images</a>
+          <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Links</a>
+          <a href="#fixed-tab-2" class="mdl-layout__tab">Images</a>
           <a href="#fixed-tab-3" class="mdl-layout__tab">Analytics</a>
         </div>
       </header>
       <main class="mdl-layout__content">
-        <section class="mdl-layout__tab-panel" id="fixed-tab-1">
+        <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
           <div class="page-content"><Links /></div>
         </section>
-        <section class="mdl-layout__tab-panel is-active" id="fixed-tab-2">
+        <section class="mdl-layout__tab-panel" id="fixed-tab-2">
           <div class="page-content"><Images /></div>
         </section>
         <section class="mdl-layout__tab-panel" id="fixed-tab-3">

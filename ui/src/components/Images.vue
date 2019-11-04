@@ -50,13 +50,15 @@ export default {
   methods: {
     transform: function(data) {
       return data.map(d => {
-        if (d.exif.length > 0) {
+        if (d.exif && d.exif.length > 0) {
           d.exif = d.exif.map(e => {
               var key = Object.keys(e)[0]
               var value = Object.values(e)[0]
               return key+"="+value;
           })
           d.exif = d.exif.filter(f => f !== "Error=no EXIF found in image");
+        } else {
+          d.exif = []
         }
         d.filename = d.url.substring(d.url.lastIndexOf('/')+1);
         if (d.inception && d.inception.length >= 1) {
